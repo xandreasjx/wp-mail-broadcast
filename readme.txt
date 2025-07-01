@@ -1,5 +1,5 @@
 Role Based Newsletter
 =====================
 
-This plugin allows you to send newsletter emails to users filtered by their WordPress role. Navigate to **Role Newsletter** in the admin menu, compose your message, choose a role, and send the email using `wp_mail()`.
+Dieses Plugin ermöglicht das Versenden von Newsletter-E-Mails an Benutzer anhand ihrer Rolle. Rufen Sie im Admin-Menü **Rollen Newsletter** auf, verfassen Sie Ihre Nachricht und wählen Sie die Rolle **Kunde** aus. Der Versand erfolgt anschließend über `wp_mail()`.
 
