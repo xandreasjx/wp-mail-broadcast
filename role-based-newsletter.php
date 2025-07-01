@@ -17,14 +17,19 @@ class Role_Based_Newsletter {
     }
 
     public function register_menu() {
-        add_menu_page( 'Role Newsletter', 'Role Newsletter', 'manage_options', 'role-newsletter', array( $this, 'render_page' ) );
+        // Register the admin menu in German.
+        add_menu_page( 'Rollen Newsletter', 'Rollen Newsletter', 'manage_options', 'role-newsletter', array( $this, 'render_page' ) );
     }
 
     public function render_page() {
         if ( ! current_user_can( 'manage_options' ) ) {
             return;
         }
-        $roles = wp_roles()->get_names();
+        $all_roles = wp_roles()->get_names();
+        $roles     = array();
+        if ( isset( $all_roles['customer'] ) ) {
+            $roles['customer'] = $all_roles['customer'];
+        }
 
         if ( isset( $_POST['rbn_submit'] ) && check_admin_referer( 'rbn_send_newsletter', 'rbn_nonce' ) ) {
             $subject = sanitize_text_field( wp_unslash( $_POST['rbn_subject'] ) );
@@ -34,20 +39,20 @@ class Role_Based_Newsletter {
         }
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e( 'Send Role Based Newsletter', 'rbn' ); ?></h1>
+            <h1><?php esc_html_e( 'Newsletter nach Rolle versenden', 'rbn' ); ?></h1>
             <form method="post">
                 <?php wp_nonce_field( 'rbn_send_newsletter', 'rbn_nonce' ); ?>
                 <table class="form-table" role="presentation">
                     <tr>
-                        <th scope="row"><label for="rbn_subject"><?php esc_html_e( 'Subject', 'rbn' ); ?></label></th>
+                        <th scope="row"><label for="rbn_subject"><?php esc_html_e( 'Betreff', 'rbn' ); ?></label></th>
                         <td><input name="rbn_subject" type="text" id="rbn_subject" value="" class="regular-text" required></td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="rbn_content"><?php esc_html_e( 'Content (HTML)', 'rbn' ); ?></label></th>
+                        <th scope="row"><label for="rbn_content"><?php esc_html_e( 'Nachricht', 'rbn' ); ?></label></th>
                         <td><textarea name="rbn_content" id="rbn_content" rows="10" class="large-text" required></textarea></td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="rbn_role"><?php esc_html_e( 'Recipient Role', 'rbn' ); ?></label></th>
+                        <th scope="row"><label for="rbn_role"><?php esc_html_e( 'Benutzerrolle', 'rbn' ); ?></label></th>
                         <td>
                             <select name="rbn_role" id="rbn_role" required>
                                 <?php foreach ( $roles as $role_key => $role_name ) : ?>
@@ -57,7 +62,7 @@ class Role_Based_Newsletter {
                         </td>
                     </tr>
                 </table>
-                <?php submit_button( __( 'Send Newsletter', 'rbn' ), 'primary', 'rbn_submit' ); ?>
+                <?php submit_button( __( 'Newsletter senden', 'rbn' ), 'primary', 'rbn_submit' ); ?>
             </form>
         </div>
         <?php
@@ -68,7 +73,7 @@ class Role_Based_Newsletter {
         foreach ( $users as $user ) {
             wp_mail( $user->user_email, $subject, $content, array( 'Content-Type: text/html; charset=UTF-8' ) );
         }
-        echo '<div class="updated"><p>' . esc_html__( 'Newsletter sent to role: ', 'rbn' ) . esc_html( $role ) . '</p></div>';
+        echo '<div class="updated"><p>' . esc_html__( 'Newsletter an Rolle ', 'rbn' ) . esc_html( $role ) . esc_html__( ' gesendet.', 'rbn' ) . '</p></div>';
     }
 }
 
